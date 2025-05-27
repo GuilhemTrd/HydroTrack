@@ -6,11 +6,11 @@ function App() {
   const auth = useAuth();
 
   const clientId = "19q2r3ng1rpvvoedokt1acrmla";
-  const logoutUri = "https://ton-domaine.com"; // Mets ici ton URL de prod
+  const logoutUri = "http://localhost:3000"; // Mets ici ton URL de prod
   const cognitoDomain = "https://eu-west-3g7ibpgbi9.auth.eu-west-3.amazoncognito.com";
 
-  const signOutRedirect = () => {
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  const signUpRedirect = () => {
+    window.location.href = `${cognitoDomain}/signup?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${encodeURIComponent(logoutUri)}`;
   };
 
   if (auth.isLoading) {
@@ -25,7 +25,6 @@ function App() {
     return (
         <div className="app-container">
           <HomePage />
-          <button onClick={() => auth.removeUser()}>Se déconnecter</button>
         </div>
     );
   }
@@ -37,6 +36,7 @@ function App() {
           <p>Suivez votre consommation d’eau au quotidien, atteignez vos objectifs, et restez en pleine forme !</p>
           <p>Connectez-vous pour commencer à suivre votre hydratation.</p>
           <button onClick={() => auth.signinRedirect()}>Se connecter</button>
+          <button onClick={signUpRedirect}>Créer un compte</button>
         </div>
       </div>
   );

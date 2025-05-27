@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import axios from 'axios';
-import {useAuth} from "react-oidc-context";
+import { useAuth } from "react-oidc-context";
 
 const HomePage = () => {
     const [hydrationData, setHydrationData] = useState([]);
     const [notification, setNotification] = useState('');
-    const [showHistory, setShowHistory] = useState(false);
+    const [showHistory, setShowHistory] = useState(true); // Set to true by default
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const auth = useAuth();
+
+    useEffect(() => {
+        if (showHistory) {
+            getHistoryHydratation();
+        }
+    }, []); // Empty dependency array ensures this runs only once when the component mounts
 
     const getHistoryHydratation = async () => {
         setLoading(true);
@@ -54,13 +60,14 @@ const HomePage = () => {
         setNotification(`Bravo ! Vous avez bu ${amount} ml d'eau.`);
 
         try {
+            let data = JSON.stringify({
+                "userId": userId,
+                "quantity": amount,
+                "date": date
+            });
             await axios.post(
                 'https://cdkqfkwkm7.execute-api.eu-west-3.amazonaws.com/api/add-drink',
-                {
-                    userId: userId,
-                    quantity: amount,
-                    datetime: date,
-                },
+                data,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -111,7 +118,6 @@ const HomePage = () => {
                         className="show-history-button"
                         onClick={() => {
                             setShowHistory(!showHistory);
-                            if (!showHistory) getHistoryHydratation();
                         }}
                     >
                         {showHistory ? 'Masquer l’historique' : 'Afficher l’historique'}
