@@ -1,11 +1,16 @@
+/* ===== Structure globale ===== */
+
 .home-page {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 100%;
+    background-color: #f0f2f5;
 }
 
-header {
+/* ===== Header / Navbar ===== */
+
+.navbar {
     width: 100%;
     background-color: #007bb5;
     display: flex;
@@ -13,14 +18,14 @@ header {
     align-items: center;
     padding: 15px 30px;
     color: white;
-    font-size: 18px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.navbar .logo {
-    font-size: 28px;
+.logo h1 {
+    margin: 0;
+    font-size: 32px;
     font-weight: bold;
 }
 
@@ -28,8 +33,9 @@ header {
     background-color: #ff7f00;
     border: none;
     color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
@@ -38,53 +44,48 @@ header {
     background-color: #e66e00;
 }
 
-/* Main content */
+/* ===== Main ===== */
+
 main {
     width: 100%;
     max-width: 800px;
     background-color: #e1f7ff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 30px;
     margin-top: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .intro {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .button-group {
     display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .water-button {
     background-color: #007bb5;
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 5px;
-    font-size: 18px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.progress-section{
-    margin-top: 20px;
 }
 
 .water-button:hover {
     background-color: #005f83;
 }
 
-.notification {
+.progress-section {
     text-align: center;
-    background-color: #e0ffe0;
-    color: #28a745;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 18px;
-    margin-top: 15px;
 }
 
 .show-history-button {
@@ -92,35 +93,58 @@ main {
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 6px;
+    margin-top: 15px;
     cursor: pointer;
-    margin-top: 20px;
+    transition: background-color 0.3s;
 }
 
 .show-history-button:hover {
     background-color: #005f83;
 }
 
+/* ===== Historique ===== */
+
 .history {
     margin-top: 20px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
 }
 
 ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 li {
-    font-size: 16px;
+    font-size: 15px;
     margin-bottom: 10px;
 }
 
-/* Footer */
+/* ===== États ===== */
+
+.notification {
+    background-color: #e0ffe0;
+    color: #28a745;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.loading,
+.error {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #cc0000;
+}
+
 footer {
     text-align: center;
-    margin: 40px 0 ;
+    padding: 30px 0;
     font-size: 14px;
     color: #555;
-    position: absolute;
-    bottom: 0;
 }

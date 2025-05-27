@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import './HomePage.css';
 import axios from 'axios';
+import {useAuth} from "react-oidc-context";
 
 const HomePage = () => {
-    const [hydrationData, setHydrationData] = useState([]); // tableau vide par défaut
+    const [hydrationData, setHydrationData] = useState([]);
     const [notification, setNotification] = useState('');
     const [showHistory, setShowHistory] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const auth = useAuth();
 
     const getHistoryHydratation = async () => {
         setLoading(true);
         setError(null);
+        const userId = auth.user?.profile?.sub;
+
         try {
             const response = await axios.get('https://cdkqfkwkm7.execute-api.eu-west-3.amazonaws.com/api/get-daily-hydration', {
                 params: {
-                    userId: 1
+                    userId: userId,
                 }
             });
 
@@ -30,23 +34,47 @@ const HomePage = () => {
     };
 
     const handleAddWater = async (amount) => {
+        const userId = auth.user?.profile?.sub;
+        const date = new Date().toISOString();
+
+        if (!userId) {
+            setError("Utilisateur non authentifié.");
+            return;
+        }
+
         setHydrationData([
             ...hydrationData,
             {
                 quantity: amount,
-                date: new Date().toISOString(),
-                uuid: 'unique-id',
-                userId: '1',
+                date: date,
+                userId: userId,
             },
         ]);
+
         setNotification(`Bravo ! Vous avez bu ${amount} ml d'eau.`);
+
+        try {
+            await axios.post(
+                'https://cdkqfkwkm7.execute-api.eu-west-3.amazonaws.com/api/add-drink',
+                {
+                    userId: userId,
+                    quantity: amount,
+                    datetime: date,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+        } catch (err) {
+            console.error('Erreur lors de l’enregistrement de la boisson :', err);
+            setError("Une erreur est survenue lors de l'enregistrement. Vérifiez votre connexion.");
+        }
     };
 
     const totalWaterConsumed = hydrationData.reduce((acc, current) => acc + current.quantity, 0);
-
-    const handleLogout = () => {
-        alert('Vous êtes déconnecté.');
-    };
 
     return (
         <div className="home-page">
@@ -54,7 +82,7 @@ const HomePage = () => {
                 <div className="logo">
                     <h1>HydroTrack</h1>
                 </div>
-                <button className="logout-button" onClick={handleLogout}>Se déconnecter</button>
+                <button className="logout-button" onClick={() => auth.removeUser()}>Se déconnecter</button>
             </header>
 
             <main>
@@ -92,14 +120,13 @@ const HomePage = () => {
                     {showHistory && (
                         <div className="history">
                             <h3>Historique de l'hydratation</h3>
-                            <ul>
-                                {loading && <div className="loading">Chargement...</div>}
-                                {notification && <div className="notification">{notification}</div>}
-                                {error && <div className="error">{error}</div>}
+                            {loading && <div className="loading">Chargement...</div>}
+                            {notification && <div className="notification">{notification}</div>}
 
+                            <ul>
                                 {hydrationData.map((data, index) => (
                                     <li key={index}>
-                                        <strong>{data.quantity} ml</strong> - {new Date(data.date).toLocaleString()}
+                                        <strong>{data.quantity} ml</strong> – {new Date(data.date).toLocaleString()}
                                     </li>
                                 ))}
                             </ul>
@@ -110,8 +137,8 @@ const HomePage = () => {
 
             <footer>
                 <p>
-                    HydroTrack - Suivi de votre hydratation. <br />
-                    Toujours prendre soin de votre santé!
+                    HydroTrack – Suivi de votre hydratation. <br />
+                    Toujours prendre soin de votre santé !
                 </p>
             </footer>
         </div>
